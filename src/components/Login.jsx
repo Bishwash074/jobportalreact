@@ -1,15 +1,21 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../store/authSlice'
-
+import { useNavigate } from 'react-router-dom'
 const Login = () => {
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
   const dispatch=useDispatch()
+  const authState=useSelector((state)=>state.auth)  
+  const navigate=useNavigate()
   const handleSubmit=(e)=>{
     e.preventDefault()
     //console.log("Logging in user:", { email, password });
     dispatch(loginUser({email,password}))
+    // Check if login was successful and navigate to dashboard
+    if(authState.loading === "idle" && authState.error===null){
+      navigate("/")
+    }
   }
 
   return (

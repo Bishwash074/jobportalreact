@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { data } from "react-router-dom";
 import { apiClient } from "../api";
 
 const STATUS = {
@@ -33,6 +32,13 @@ const authSlice = createSlice({
     },
     setToken(state, action) {
       state.token = action.payload
+    },
+
+    logoutUser(state) {
+      state.isAuthenticated = false;
+      state.data = []
+      state.token = "",
+        localStorage.removeItem("token")
     }
 
   }
@@ -40,7 +46,8 @@ const authSlice = createSlice({
 
 })
 
-export const { setAuthenticated, setData, setloading, setError, setToken } = authSlice.actions
+
+export const { setAuthenticated, setData, setloading, setError, setToken ,logoutUser} = authSlice.actions
 
 
 

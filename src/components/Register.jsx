@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../store/authSlice'
-
+import { Navigate, useNavigate } from 'react-router-dom'
 
 
 
@@ -10,12 +10,16 @@ const Register = () => {
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
   const dispatch = useDispatch()
-
+  const navigate=useNavigate();
+  const authState=useSelector((state)=>state.auth)
   const handleSubmit=(e)=>{
     e.preventDefault()
     console.log("Registering user",{name,email,password})
     dispatch(registerUser({name,email,password}))
 
+    if(authState.loading=="idle"&&authState.error==null){
+      navigate("/login")
+    }
 
   } 
 
