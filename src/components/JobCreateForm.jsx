@@ -1,12 +1,13 @@
 import React from 'react'
 import { APIAuthenticateClient } from '../api';
+import { Navigate, useNavigate } from 'react-router-dom';
 const JobCreateForm = () => {
   const [company, setCompany] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [location, setLocation] = React.useState('');
   const [salary, setSalary] = React.useState('');
-
+  const navigate=useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,11 +27,12 @@ const JobCreateForm = () => {
 
       if (response.status === 201) {
         alert("Job created successfully");
-        setCompany('');
-        setTitle('');
-        setDescription('');
-        setLocation('');
-        setSalary('');
+        navigate('/')
+        // setCompany('');
+        // setTitle('');
+        // setDescription('');
+        // setLocation('');
+        // setSalary('');
       }
     } catch (error) {
       console.error(error);
