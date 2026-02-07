@@ -11,7 +11,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     isAuthenticated: false,
-    data: [], //useSelector to get data from store
+    data: JSON.parse(localStorage.getItem("user")) || [], //useSelector to get data from store
     loading: STATUS.IDLE,
     token: null,
     error: null
@@ -22,7 +22,9 @@ const authSlice = createSlice({
     },
     // use dispatch
     setData(state, action) {
-      state.data = action.payload
+      state.data = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
+      state.isAuthenticated = true;
     },
     setloading(state, action) {
       state.loading = action.payload
@@ -47,7 +49,7 @@ const authSlice = createSlice({
 })
 
 
-export const { setAuthenticated, setData, setloading, setError, setToken ,logoutUser} = authSlice.actions
+export const { setAuthenticated, setData, setloading, setError, setToken, logoutUser } = authSlice.actions
 
 
 
@@ -86,9 +88,10 @@ export function registerUser(userData) {
 
 // login user thuk
 export function loginUser(userData) {
-  //console.log(userData.password)
+  //console.log(userData)
   return async function loginUserThunk(dispatch) {
     dispatch(setloading(STATUS.LOADING))
+    //console.log("hello")
 
     if (!userData.email || !userData.password) {
       dispatch(setError("Email and Password are required"));
@@ -98,12 +101,15 @@ export function loginUser(userData) {
     }
     try {
       const response = await apiClient.post("/user/login", userData)
-
+      //console.log("hello", response)
       if (response.status === 201) {
-        // console.log("Login response:", response);
 
-        const token = response.data.data; // ✅ token is here
+        console.log("Login response:", response);
+        const token = response.data.data; 
+        const user = response.data.user;
+
         dispatch(setToken(token));
+        dispatch(setData(user));
         dispatch(setAuthenticated(true));
 
         // Save token in localStorage

@@ -9,6 +9,7 @@ import JobCreateForm from './components/JobCreateForm'
 import Home from './components/Home'
 import SIngleJob from './components/SIngleJob'
 import ApplyJob from './components/ApplyJob'
+import Myapplication from './components/Myapplication'
 
 const App = () => {
   return (
@@ -19,10 +20,11 @@ const App = () => {
           <Route path="/" element={<Home/>} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path="/jobprovider" element={<JobProviderDashboard />} />
+          <Route path="/admin/dashboard" element={<JobProviderDashboard />} />
           <Route path="/jobcreate" element={<JobCreateForm />} />
           <Route path='/jobgetbyid/:id' element={<SIngleJob/>} />
-          <Route path='/applyJob/:JobId' element={<ApplyJob/>}  />
+          <Route path='/applyJob/:jobId' element={<ApplyJob/>}  />
+          <Route path='/user/dashboard' element={<Myapplication/>} />
         </Routes>
       </BrowserRouter>
 

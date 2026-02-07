@@ -7,6 +7,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, data } = useSelector((state) => state.auth);
+  console.log("AUTH DATA:", data);
   const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
@@ -46,11 +47,17 @@ const Navbar = () => {
             ) : (
               <>
                 <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
-                  👋 {data?.username}
+                  👋 {data?.name}
                 </span>
 
                 <button
-                  onClick={() => navigate("/jobprovider")}
+                  onClick={() => {
+                    if (data?.role === "jobprovider") {
+                      navigate("/admin/dashboard");
+                    } else {
+                      navigate("/user/dashboard");
+                    }
+                  }}
                   className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
                 >
                   Dashboard
@@ -102,7 +109,13 @@ const Navbar = () => {
               </div>
 
               <button
-                onClick={() => navigate("/jobprovider")}
+                onClick={() => {
+                  if (data?.role === "jobprovider") {
+                    navigate("/admin/dashboard");
+                  } else {
+                    navigate("/user/dashboard");
+                  }
+                }}
                 className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100"
               >
                 Dashboard

@@ -54,7 +54,7 @@ const Home = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
               <div
-                key={job._id}
+                key={job.id}
                 className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
               >
                 <h3 className="text-lg font-semibold">{job.title}</h3>
