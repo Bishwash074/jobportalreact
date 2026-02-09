@@ -10,6 +10,7 @@ import Home from './components/Home'
 import SIngleJob from './components/SIngleJob'
 import ApplyJob from './components/ApplyJob'
 import Myapplication from './components/Myapplication'
+import Payment from './components/Payment'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path='/jobgetbyid/:id' element={<SIngleJob/>} />
           <Route path='/applyJob/:jobId' element={<ApplyJob/>}  />
           <Route path='/user/dashboard' element={<Myapplication/>} />
+          <Route path="/payment" element={<Payment />} />
         </Routes>
       </BrowserRouter>
 

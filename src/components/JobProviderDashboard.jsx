@@ -5,21 +5,17 @@ import { APIAuthenticateClient } from "../api";
 const JobProviderDashboard = () => {
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
-  const [loadingId, setLoadingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
 
-  const handleCreate = () => {
-    navigate("/jobcreate");
-  };
-
-  // fetch applications for provider
   const fetchApplications = async () => {
     try {
       const res = await APIAuthenticateClient.get("/application/getapplication");
-      console.log(res)
-      console.log(res.data.application)
       setApplications(res.data.application);
     } catch (err) {
       console.error("Failed to load applications");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,102 +23,127 @@ const JobProviderDashboard = () => {
     fetchApplications();
   }, []);
 
-  // update application status
   const handleStatusUpdate = async (id, status) => {
-    setLoadingId(id);
+    setUpdatingId(id);
     try {
-      await APIAuthenticateClient.patch(`/application/aplicationupdate/${id}`, {
-        status,
-      });
+      await APIAuthenticateClient.patch(
+        `/application/aplicationupdate/${id}`,
+        { status }
+      );
 
-      // update UI instantly
       setApplications((prev) =>
         prev.map((app) =>
           app.id === id ? { ...app, status } : app
         )
       );
-    } catch (err) {
+    } catch {
       alert("Failed to update status");
     } finally {
-      setLoadingId(null);
+      setUpdatingId(null);
     }
+  };
+
+  // stats
+  const stats = {
+    total: applications.length,
+    accepted: applications.filter(a => a.status === "accepted").length,
+    rejected: applications.filter(a => a.status === "rejected").length,
+    pending: applications.filter(
+      a => a.status === "applied" || a.status === "in_review"
+    ).length,
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Job Provider Dashboard
-        </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Provider Dashboard</h1>
         <button
-          onClick={handleCreate}
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
+          onClick={() => navigate("/jobcreate")}
+          className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700"
         >
-          + Create Job
+          + Post New Job
         </button>
       </div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        {[
+          { label: "Total Applications", value: stats.total },
+          { label: "Pending Review", value: stats.pending },
+          { label: "Accepted", value: stats.accepted },
+          { label: "Rejected", value: stats.rejected },
+        ].map((s, i) => (
+          <div
+            key={i}
+            className="bg-white p-5 rounded-2xl shadow"
+          >
+            <p className="text-gray-500 text-sm">{s.label}</p>
+            <p className="text-3xl font-bold mt-2">{s.value}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Applications */}
-      <h2 className="text-lg font-semibold mb-4">
-        Job Applications
+      <h2 className="text-xl font-semibold mb-4">
+        Applications
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {loading && (
+        <p className="text-gray-500">Loading applications...</p>
+      )}
+
+      {!loading && applications.length === 0 && (
+        <p className="text-gray-500">
+          No applications received yet.
+        </p>
+      )}
+
+      <div className="space-y-4">
         {applications.map((app) => (
           <div
             key={app.id}
-            className="bg-white p-5 rounded-xl shadow"
+            className="bg-white p-6 rounded-2xl shadow flex flex-col md:flex-row md:items-center md:justify-between"
           >
-            <h3 className="font-semibold text-gray-800">
-              👤 {app.user?.name}
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Job: {app.job?.title}
-            </p>
-
-            <p className="text-sm text-gray-500 mt-1">
-              Applied on:{" "}
-              {new Date(app.appliedAt).toLocaleDateString()}
-            </p>
-
-            {/* Status badge */}
-            <div className="mt-3">
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium
-                  ${app.status === "accepted"
-                    ? "bg-green-100 text-green-700"
-                    : app.status === "rejected"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-              >
-                {app.status.toUpperCase()}
-              </span>
+            {/* Applicant Info */}
+            <div>
+              <h3 className="font-semibold text-lg">
+                {app.user?.name}
+              </h3>
+              <p className="text-gray-500 text-sm">
+                Applied for <b>{app.job?.title}</b>
+              </p>
+              <p className="text-gray-400 text-xs mt-1">
+                {new Date(app.appliedAt).toLocaleDateString()}
+              </p>
             </div>
 
-            {/* Action buttons */}
-            {(app.status === "applied" || app.status === "in_review") && (
-              <div className="flex gap-3 mt-4">
-                <button
-                  disabled={loadingId === app.id}
-                  onClick={() => handleStatusUpdate(app.id, "accepted")}
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
-                >
-                  Accept
-                </button>
+            {/* Status */}
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
+              <select
+                value={app.status}
+                disabled={updatingId === app.id}
+                onChange={(e) =>
+                  handleStatusUpdate(app.id, e.target.value)
+                }
+                className="border rounded-xl px-3 py-2 text-sm"
+              >
+                <option value="applied">Applied</option>
+                <option value="in_review">In Review</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+              </select>
 
-                <button
-                  disabled={loadingId === app.id}
-                  onClick={() => handleStatusUpdate(app.id, "rejected")}
-                  className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
-                >
-                  Reject
-                </button>
-              </div>
-            )}
-
+              <button
+                onClick={() =>
+                  navigate(`/applicant/${app.user?.id}`)
+                }
+                className="px-4 py-2 border rounded-xl text-sm hover:bg-gray-100"
+              >
+                View Profile
+              </button>
+            </div>
           </div>
         ))}
       </div>
