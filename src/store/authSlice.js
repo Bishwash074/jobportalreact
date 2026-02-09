@@ -70,8 +70,7 @@ export function registerUser(userData) {
     try {
       const response = await apiClient.post("/user/register", userData)
       if (response.status === 201) {
-        dispatch(setData(response.data))
-        alert("sucess")
+        alert("Sucessfully register")
       } else {
         dispatch(setError("Register failed"))
         dispatch(setloading(STATUS.ERROR))

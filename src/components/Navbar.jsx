@@ -14,6 +14,7 @@ const Navbar = () => {
     dispatch(logoutUser());
     // navigate("/");
   };
+  
 
   return (
     <nav className="bg-white sticky top-0 z-50 shadow-sm">
