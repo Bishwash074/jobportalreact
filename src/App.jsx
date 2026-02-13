@@ -11,6 +11,8 @@ import SIngleJob from './components/SIngleJob'
 import ApplyJob from './components/ApplyJob'
 import Myapplication from './components/Myapplication'
 import Payment from './components/Payment'
+import ForgotPassword from './components/ForgetPassword'
+import Verifyotp from './components/Verifyotp'
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
           <Route path='/applyJob/:jobId' element={<ApplyJob/>}  />
           <Route path='/user/dashboard' element={<Myapplication/>} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="verify-otp" element={<Verifyotp />} />
         </Routes>
       </BrowserRouter>
 
