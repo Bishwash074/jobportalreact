@@ -13,6 +13,7 @@ import Myapplication from './components/Myapplication'
 import Payment from './components/Payment'
 import ForgotPassword from './components/ForgetPassword'
 import Verifyotp from './components/Verifyotp'
+import ResetPassword from './components/ResetPassword'
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="verify-otp" element={<Verifyotp />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
 

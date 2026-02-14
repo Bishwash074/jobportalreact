@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../store/authSlice'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const dispatch = useDispatch()
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth)
   const navigate = useNavigate()
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    //console.log("Logging in user:", { email, password });
     dispatch(loginUser({ email, password }))
-    // Check if login was successful and navigate to dashboard
-
   }
+
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate("/")
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -27,6 +27,8 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center mb-6">Login Account</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -40,11 +42,11 @@ const Login = () => {
             />
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -54,17 +56,34 @@ const Login = () => {
             />
           </div>
 
+          {/* Forgot Password */}
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Error message */}
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+            disabled={loading === "loading"}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
           >
-            Login
+            {loading === "loading" ? "Logging in..." : "Login"}
           </button>
+
+
         </form>
       </div>
     </div>
   )
 }
-
 
 export default Login
